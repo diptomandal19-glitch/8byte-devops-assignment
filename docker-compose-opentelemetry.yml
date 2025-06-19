@@ -1,4 +1,14 @@
 services:
+  adotcollector:
+    image: public.ecr.aws/aws-observability/aws-otel-collector:latest
+    command: ["--config=/etc/adot-config.yaml"]
+    env_file:
+      - .env
+    volumes:
+      - ./server/opentelemetry/adot-collector-config/adot-config.yaml:/etc/adot-config.yaml
+      - ~/.aws:/home/aoc/.aws
+    networks:
+      - webnet
   db:
     image: postgres:15
     env_file:
@@ -8,13 +18,16 @@ services:
       - postgres_data:/var/lib/postgresql@15/data  # Persist PostgreSQL data
     networks:
       - webnet
-
+    depends_on:
+      - adotcollector
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.opentelemetry
     image: fastapi-microservices:${IMAGE_VERSION}
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     volumes:
-      - ./server/general:/server
+      - ./server/opentelemetry:/server
     ports:
       - 8000:8000
     depends_on:
