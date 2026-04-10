@@ -8,7 +8,7 @@ metadata:
   # region: The AWS region where your EKS cluster will be created.
   region: us-east-1
   # version: The Kubernetes version to use for your EKS cluster.
-  version: "1.29"
+  version: "1.34"
 
 # The fargateProfiles section is for configuring Fargate profiles, which determine which pods run on Fargate when launched into specified namespaces.
 fargateProfiles:
