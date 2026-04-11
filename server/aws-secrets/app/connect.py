@@ -20,7 +20,7 @@ def wait_for_db(db_url, max_retries=10, wait_time=1):
     port = result.port
     retries = 0
 
-    logger.info(f"Trying to connect to {host}:{port} as {user}...")
+    logger.info(f"Trying to connect to {host}:{port}...")
 
     while retries < max_retries:
         try:
@@ -73,7 +73,6 @@ secret_data = get_secret('eksdevworkshop-db-url')
 # Parse the json string in secret_data and extract connectionstring
 DATABASE_URL = json.loads(secret_data)['connectionstring']
 
-print("Database URL:", DATABASE_URL)
 
 wait_for_db(DATABASE_URL)
 
