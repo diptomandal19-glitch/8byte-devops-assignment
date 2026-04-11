@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim as builder
+FROM python:3.11-slim as builder
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -9,10 +9,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /server
 
 # Install system dependencies and Python dependencies
-COPY ./server/requirements.txt /server/
+COPY ./server/general/requirements.txt /server/
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /server/wheels -r requirements.txt
 
-FROM python:3.9-slim  as runner
+FROM python:3.11-slim as runner
 
 WORKDIR /server
 
@@ -23,10 +23,10 @@ RUN pip install --no-cache-dir /server/wheels/* \
     && pip install --no-cache-dir uvicorn
 
 # Copy project
-COPY . /server/
+COPY ./server/general/ /server/
 
 # Expose the port the app runs in
 EXPOSE 8000
 
 # Define the command to start the container
-CMD ["uvicorn", "server.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

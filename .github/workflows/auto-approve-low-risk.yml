@@ -1,0 +1,58 @@
+name: Auto-Approve Low-Risk PRs
+
+on:
+  pull_request:
+    paths:
+      - 'Dockerfile'
+      - 'docker-compose*.yml'
+      - '*.md'
+      - '.gitignore'
+      - '.pre-commit-config.yaml'
+      - 'eks/**/*.yaml'
+      - 'kubernetes/**/*.yaml'
+
+permissions:
+  pull-requests: write
+
+env:
+  # Comma-separated list of trusted GitHub usernames allowed for auto-approve
+  TRUSTED_AUTHORS: 'jrgwv'
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    if: contains(vars.TRUSTED_AUTHORS || 'jrgwv', github.actor)
+    steps:
+      - name: Check diff size
+        id: diff
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ADDITIONS=$(gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --json additions -q '.additions')
+          DELETIONS=$(gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --json deletions -q '.deletions')
+          TOTAL=$((ADDITIONS + DELETIONS))
+          echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "PR diff: +$ADDITIONS -$DELETIONS ($TOTAL total lines)"
+
+      - name: Check for source code changes
+        id: check-files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          FILES=$(gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --json files -q '.files[].path')
+          HAS_APP_CODE=false
+          for f in $FILES; do
+            if echo "$f" | grep -qE '\.(py|js|ts|sh)$'; then
+              HAS_APP_CODE=true
+              break
+            fi
+          done
+          echo "has_app_code=$HAS_APP_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Auto-approve if low risk
+        if: steps.diff.outputs.total <= 50 && steps.check-files.outputs.has_app_code == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr review ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --approve \
+            --body "Auto-approved: low-risk PR (config/docs only, ${{ steps.diff.outputs.total }} lines changed)"
