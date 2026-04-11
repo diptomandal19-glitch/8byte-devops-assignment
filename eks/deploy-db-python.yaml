@@ -30,7 +30,7 @@ spec:
         image: postgres:15
         env:
         - name: PGDATA # This is required due to 
-          value: /var/lib/postgresql@15/data/pgdata
+          value: /var/lib/postgresql/data/pgdata
         envFrom:
         - secretRef:
             name: fastapi-secret
