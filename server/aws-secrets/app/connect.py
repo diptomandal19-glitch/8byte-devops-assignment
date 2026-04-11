@@ -20,7 +20,7 @@ def wait_for_db(db_url, max_retries=10, wait_time=1):
     port = result.port
     retries = 0
 
-    logger.info(f"Trying to connect to {host}:{port}...")
+    logger.info("Trying to connect to database...")
 
     while retries < max_retries:
         try:
