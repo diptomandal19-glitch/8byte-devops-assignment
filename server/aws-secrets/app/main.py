@@ -93,7 +93,7 @@ def update_book(
     book.author = author
     book.description = description
     db.commit()
-    return RedirectResponse(url=f"/books/{book_id}", status_code=303)
+    return RedirectResponse(url=f"/books/{int(book_id)}", status_code=303)
 
 
 @app.get("/books/{book_id}/delete")

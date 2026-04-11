@@ -20,7 +20,7 @@ def wait_for_db(db_url, max_retries=10, wait_time=1):
     port = result.port
     retries = 0
 
-    logger.info(f"Trying to connect to {host}:{port} as {user}...")
+    logger.info(f"Trying to connect to {host}:{port}...")
 
     while retries < max_retries:
         try:
@@ -38,7 +38,6 @@ def wait_for_db(db_url, max_retries=10, wait_time=1):
     logger.error("Max retries reached. Unable to connect to the database.")
 
 DATABASE_URL = os.getenv("DOCKER_DATABASE_URL")
-print("Database URL:", DATABASE_URL)
 
 wait_for_db(DATABASE_URL)
 
