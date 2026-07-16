@@ -8,6 +8,21 @@
             "Type": "String",
             "AllowedValues": ["ManagedNodeGroup", "AutoMode"],
             "ConstraintDescription": "Must specify either Managed Node Groups or AutoMode"
+        },
+        "DBMasterUsername": {
+            "Description": "Master username for the RDS cluster",
+            "Default": "bookdbadmin",
+            "Type": "String",
+            "MinLength": 1,
+            "MaxLength": 63
+        },
+        "DBMasterPassword": {
+            "Description": "Master password for the RDS cluster",
+            "Type": "String",
+            "NoEcho": true,
+            "MinLength": 8,
+            "MaxLength": 128,
+            "ConstraintDescription": "Must be between 8 and 128 characters"
         }
     },
     "Conditions": {
@@ -22,8 +37,8 @@
                 "DBSubnetGroupName": {"Ref": "DBSubnetGroup"},
                 "Engine": "aurora-postgresql",
                 "EngineVersion": "15.10",
-                "MasterUsername": "bookdbadmin",
-                "MasterUserPassword": "dbpassword",
+                "MasterUsername": {"Ref": "DBMasterUsername"},
+                "MasterUserPassword": {"Ref": "DBMasterPassword"},
                 "Port": 5432,
                 "ServerlessV2ScalingConfiguration": {
                     "MinCapacity": 0.5,
