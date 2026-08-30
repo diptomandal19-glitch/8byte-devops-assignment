@@ -27,3 +27,18 @@ output "rds_security_group_id" {
   description = "RDS security group ID"
   value       = module.security_groups.rds_security_group_id
 }
+
+output "db_instance_id" {
+  description = "Staging RDS instance ID"
+  value       = module.rds.db_instance_id
+}
+
+output "db_endpoint" {
+  description = "Staging PostgreSQL endpoint"
+  value       = module.rds.db_endpoint
+}
+
+output "db_port" {
+  description = "Staging PostgreSQL port"
+  value       = module.rds.db_port
+}

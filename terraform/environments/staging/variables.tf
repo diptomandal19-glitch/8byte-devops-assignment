@@ -39,3 +39,39 @@ variable "private_subnet_cidrs" {
   type        = list(string)
   default     = ["10.0.11.0/24", "10.0.12.0/24"]
 }
+
+variable "database_name" {
+  description = "Staging PostgreSQL database name"
+  type        = string
+  default     = "bookstore"
+}
+
+variable "database_username" {
+  description = "Staging PostgreSQL username"
+  type        = string
+  sensitive   = true
+}
+
+variable "database_password" {
+  description = "Staging PostgreSQL password"
+  type        = string
+  sensitive   = true
+}
+
+variable "rds_instance_class" {
+  description = "Staging RDS instance class"
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "rds_allocated_storage" {
+  description = "Staging RDS storage in GB"
+  type        = number
+  default     = 20
+}
+
+variable "rds_backup_retention_period" {
+  description = "Staging RDS backup retention in days"
+  type        = number
+  default     = 7
+}

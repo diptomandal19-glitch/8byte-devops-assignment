@@ -172,3 +172,4 @@ cython_debug/
 *.tfstate.*
 *.tfvars
 *.tfvars.json
+*.tfvars

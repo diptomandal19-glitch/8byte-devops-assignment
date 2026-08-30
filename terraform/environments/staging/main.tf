@@ -46,3 +46,21 @@ module "security_groups" {
   environment  = var.environment
   vpc_id       = module.vpc.vpc_id
 }
+
+module "rds" {
+  source = "../../modules/rds"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  private_subnet_ids    = module.vpc.private_subnet_ids
+  rds_security_group_id = module.security_groups.rds_security_group_id
+
+  database_name     = var.database_name
+  database_username = var.database_username
+  database_password = var.database_password
+
+  instance_class          = var.rds_instance_class
+  allocated_storage       = var.rds_allocated_storage
+  backup_retention_period = var.rds_backup_retention_period
+}
