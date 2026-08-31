@@ -64,3 +64,36 @@ module "rds" {
   allocated_storage       = var.rds_allocated_storage
   backup_retention_period = var.rds_backup_retention_period
 }
+
+module "ec2" {
+  source = "../../modules/ec2"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  private_subnet_ids    = module.vpc.private_subnet_ids
+  app_security_group_id = module.security_groups.app_security_group_id
+
+  ami_id         = var.ec2_ami_id
+  instance_type  = var.ec2_instance_type
+  instance_count = var.ec2_instance_count
+
+  aws_region         = "ap-south-1"
+  ecr_repository_url = module.ecr.repository_url
+
+  iam_instance_profile = module.iam.instance_profile_name
+}
+
+module "ecr" {
+  source = "../../modules/ecr"
+
+  project_name = var.project_name
+  environment  = var.environment
+}
+
+module "iam" {
+  source = "../../modules/iam"
+
+  project_name = var.project_name
+  environment  = var.environment
+}

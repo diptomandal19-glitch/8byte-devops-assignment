@@ -75,3 +75,20 @@ variable "rds_backup_retention_period" {
   type        = number
   default     = 7
 }
+
+variable "ec2_ami_id" {
+  description = "Amazon Linux 2023 AMI ID"
+  type        = string
+}
+
+variable "ec2_instance_type" {
+  description = "Staging EC2 instance type"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "ec2_instance_count" {
+  description = "Number of staging application instances"
+  type        = number
+  default     = 2
+}
