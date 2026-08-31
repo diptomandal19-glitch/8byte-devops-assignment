@@ -82,6 +82,10 @@ module "ec2" {
   ecr_repository_url = module.ecr.repository_url
 
   iam_instance_profile = module.iam.instance_profile_name
+
+  db_endpoint = module.rds.db_endpoint
+
+  secret_arn = module.secrets_manager.secret_arn
 }
 
 module "ecr" {
@@ -96,4 +100,17 @@ module "iam" {
 
   project_name = var.project_name
   environment  = var.environment
+
+  secret_arn = module.secrets_manager.secret_arn
+}
+
+module "secrets_manager" {
+  source = "../../modules/secrets-manager"
+
+  project_name = var.project_name
+  environment  = var.environment
+
+  db_username = var.database_username
+  db_password = var.database_password
+  db_name     = var.database_name
 }

@@ -7,3 +7,8 @@ variable "environment" {
   description = "Deployment environment"
   type        = string
 }
+
+variable "secret_arn" {
+  description = "ARN of the database credentials secret"
+  type        = string
+}

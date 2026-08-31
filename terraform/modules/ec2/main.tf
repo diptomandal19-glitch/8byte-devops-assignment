@@ -17,13 +17,27 @@ resource "aws_instance" "this" {
             set -e
 
             dnf update -y
-            dnf install -y docker awscli
+            dnf install -y docker awscli python3
 
             systemctl enable docker
             systemctl start docker
 
             REGION="${var.aws_region}"
             ECR_REPOSITORY="${var.ecr_repository_url}"
+            SECRET_ARN="${var.secret_arn}"
+            DB_HOST="${var.db_endpoint}"
+
+            SECRET_JSON=$(aws secretsmanager get-secret-value \
+              --secret-id "$SECRET_ARN" \
+              --region "$REGION" \
+              --query SecretString \
+              --output text)
+
+            DB_USERNAME=$(echo "$SECRET_JSON" | python3 -c 'import sys,json; print(json.load(sys.stdin)["username"])')
+            DB_PASSWORD=$(echo "$SECRET_JSON" | python3 -c 'import sys,json; print(json.load(sys.stdin)["password"])')
+            DB_NAME=$(echo "$SECRET_JSON" | python3 -c 'import sys,json; print(json.load(sys.stdin)["dbname"])')
+
+            DATABASE_URL="postgresql://$DB_USERNAME:$DB_PASSWORD@$DB_HOST:5432/$DB_NAME"
 
             aws ecr get-login-password --region "$REGION" | \
               docker login --username AWS --password-stdin "$ECR_REPOSITORY"
@@ -34,6 +48,7 @@ resource "aws_instance" "this" {
               --name fastapi-app \
               --restart unless-stopped \
               -p 8000:8000 \
+              -e DOCKER_DATABASE_URL="$DATABASE_URL" \
               "$ECR_REPOSITORY:latest"
             EOF
 

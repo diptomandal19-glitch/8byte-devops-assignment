@@ -55,3 +55,13 @@ variable "ecr_repository_url" {
   description = "ECR repository URL"
   type        = string
 }
+
+variable "secret_arn" {
+  description = "ARN of the database credentials secret"
+  type        = string
+}
+
+variable "db_endpoint" {
+  description = "RDS PostgreSQL endpoint"
+  type        = string
+}
