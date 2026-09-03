@@ -52,3 +52,8 @@ output "ecr_repository_name" {
   description = "ECR repository name"
   value       = module.ecr.repository_name
 }
+
+output "alb_dns_name" {
+  description = "Application Load Balancer DNS name"
+  value       = module.alb.alb_dns_name
+}
